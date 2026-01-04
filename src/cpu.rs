@@ -37,6 +37,8 @@ impl CPU {
             3 => self.d = val,
             _ => {}
         }
+
+        self.zero = val == 0;
     }
 
     pub fn add(&mut self, mem:&mut Memory) {
@@ -150,7 +152,6 @@ impl CPU {
         if self.zero {
             self.pc = addrs;
         }
-
     }
 
  pub fn jnz(&mut self, mem: &mut Memory) {
@@ -162,7 +163,6 @@ impl CPU {
         if !self.zero {
             self.pc = addrs;
         }
-
     }
 
 
