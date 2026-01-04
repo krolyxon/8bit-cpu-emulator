@@ -18,7 +18,7 @@ pub struct CPU{
 }
 
 impl CPU {
-    pub fn inc_cp(&mut self) {
+    pub fn inc_pc(&mut self) {
         self.pc += 1;
     }
 
@@ -27,8 +27,8 @@ impl CPU {
     }
 
     pub fn mov(&mut self, mem: &mut Memory) {
-        let reg = mem.read(self.pc); self.inc_cp();
-        let val = mem.read(self.pc); self.inc_cp();
+        let reg = mem.read(self.pc); self.inc_pc();
+        let val = mem.read(self.pc); self.inc_pc();
 
         match reg {
             0 => self.a = val,
@@ -130,6 +130,27 @@ impl CPU {
 
         self.zero = result == 0;
         self.carry = borrow;
+    }
+
+    pub fn jmp(&mut self, mem: &mut Memory) {
+        let low = mem.read(self.pc) as u16; self.inc_pc();
+        let high = mem.read(self.pc) as u16; self.inc_pc();
+
+        let addrs = (high << 8) | low;
+
+        self.pc = addrs;
+    }
+
+    pub fn jz(&mut self, mem: &mut Memory) {
+        let low = mem.read(self.pc) as u16; self.inc_pc();
+        let high = mem.read(self.pc) as u16; self.inc_pc();
+
+        let addrs = (high << 8) | low;
+
+        if self.zero {
+            self.pc = addrs;
+        }
+
     }
 
 }
