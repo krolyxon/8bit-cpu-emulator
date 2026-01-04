@@ -1,3 +1,5 @@
+use crate::memory::{self, Memory};
+
 #[derive(Default)]
 #[derive(Debug)]
 pub struct CPU{
@@ -19,4 +21,115 @@ impl CPU {
     pub fn inc_cp(&mut self) {
         self.pc += 1;
     }
+
+    pub fn halt(&mut self) {
+        self.halted = true;
+    }
+
+    pub fn mov(&mut self, mem: &mut Memory) {
+        let reg = mem.read(self.pc); self.inc_cp();
+        let val = mem.read(self.pc); self.inc_cp();
+
+        match reg {
+            0 => self.a = val,
+            1 => self.b = val,
+            2 => self.c = val,
+            3 => self.d = val,
+            _ => {}
+        }
+    }
+
+    pub fn add(&mut self, mem:&mut Memory) {
+
+        let dest = mem.read(self.pc); self.pc += 1;
+        let src  = mem.read(self.pc); self.pc += 1;
+
+        let (result, carry) = match (dest, src) {
+            // What the fuck do these tuples mean?
+            // so basically they are the numbers assigned to register
+            // 0 => A, 1 => B ....
+            // so when it is (0, 0), it basically says add the
+            // value of register B into register A,
+            // thats exactly whats replicated in the code below
+            (0, 0) => self.a.overflowing_add(self.a),
+            (0, 1) => self.a.overflowing_add(self.b),
+            (0, 2) => self.a.overflowing_add(self.c),
+            (0, 3) => self.a.overflowing_add(self.d),
+
+            (1, 0) => self.b.overflowing_add(self.a),
+            (1, 1) => self.b.overflowing_add(self.b),
+            (1, 2) => self.b.overflowing_add(self.c),
+            (1, 3) => self.b.overflowing_add(self.d),
+
+            (2, 0) => self.c.overflowing_add(self.a),
+            (2, 1) => self.c.overflowing_add(self.b),
+            (2, 2) => self.c.overflowing_add(self.c),
+            (2, 3) => self.c.overflowing_add(self.d),
+
+            (3, 0) => self.d.overflowing_add(self.a),
+            (3, 1) => self.d.overflowing_add(self.b),
+            (3, 2) => self.d.overflowing_add(self.c),
+            (3, 3) => self.d.overflowing_add(self.d),
+
+            _ => (0, false),
+        };
+
+        match dest {
+            0 => self.a = result,
+            1 => self.b = result,
+            2 => self.c = result,
+            3 => self.d = result,
+            _ => {}
+        }
+
+        self.zero = result == 0;
+        self.carry = carry;
+    }
+
+    pub fn sub(&mut self, mem: &mut Memory) {
+        let dest = mem.read(self.pc); self.pc += 1;
+        let src  = mem.read(self.pc); self.pc += 1;
+
+        let (result, borrow) = match (dest, src) {
+            // What the fuck do these tuples mean?
+            // so basically they are the numbers assigned to register
+            // 0 => A, 1 => B ....
+            // so when it is (0, 0), it basically says add the
+            // value of register B into register A,
+            // thats exactly whats replicated in the code below
+            (0, 0) => self.a.overflowing_sub(self.a),
+            (0, 1) => self.a.overflowing_sub(self.b),
+            (0, 2) => self.a.overflowing_sub(self.c),
+            (0, 3) => self.a.overflowing_sub(self.d),
+
+            (1, 0) => self.b.overflowing_sub(self.a),
+            (1, 1) => self.b.overflowing_sub(self.b),
+            (1, 2) => self.b.overflowing_sub(self.c),
+            (1, 3) => self.b.overflowing_sub(self.d),
+
+            (2, 0) => self.c.overflowing_sub(self.a),
+            (2, 1) => self.c.overflowing_sub(self.b),
+            (2, 2) => self.c.overflowing_sub(self.c),
+            (2, 3) => self.c.overflowing_sub(self.d),
+
+            (3, 0) => self.d.overflowing_sub(self.a),
+            (3, 1) => self.d.overflowing_sub(self.b),
+            (3, 2) => self.d.overflowing_sub(self.c),
+            (3, 3) => self.d.overflowing_sub(self.d),
+
+            _ => (0, false),
+        };
+
+        match dest {
+            0 => self.a = result,
+            1 => self.b = result,
+            2 => self.c = result,
+            3 => self.d = result,
+            _ => {}
+        }
+
+        self.zero = result == 0;
+        self.carry = borrow;
+    }
+
 }
