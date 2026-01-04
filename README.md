@@ -1,4 +1,4 @@
-# 8-Bit CPU Simulator
+# 8-Bit CPU Emulator
 
 ## Added instructions
 1. MOV
@@ -8,3 +8,9 @@
 5. JZ (Jump if zero)
 5. JZ (Jump if not zero)
 6. HLT (Halt)
+
+## Todo
+- [ ] Assembler
+    - [ ] Lexer/Tokenizer
+- [ ] Error handling
+- [ ] Build Debugger
