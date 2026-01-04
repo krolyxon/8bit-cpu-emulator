@@ -1,58 +1,26 @@
+mod assembler;
 mod cpu;
 mod instructions;
 mod memory;
 
 use cpu::CPU;
-use instructions::Instruction;
 use memory::Memory;
+
+use crate::assembler::assembler;
 
 fn main() {
     let mut cpu = CPU::default();
     let mut mem = Memory::new();
 
-    // a = 10
-    mem.write(0x0000, Instruction::MOV as u8);
-    mem.write(0x0001, 0);
-    mem.write(0x0002, 5);
+    let asm = std::fs::read_to_string("program.asm").unwrap();
+    let program = assembler(&asm);
 
-    // b = 2
-    mem.write(0x0003, Instruction::MOV as u8);
-    mem.write(0x0004, 1);
-    mem.write(0x0005, 3);
-
-    // a = a + b
-    mem.write(0x0006, Instruction::SUB as u8);
-    mem.write(0x0007, 0);
-    mem.write(0x0008, 1);
-
-    // JMP to halt
-    mem.write(0x0009, Instruction::JNZ as u8);
-    mem.write(0x000a, 0x0f); // Low
-    mem.write(0x000b, 0x00); // High
-
-    // set b = 0
-    mem.write(0x000c, Instruction::MOV as u8);
-    mem.write(0x000d, 1);
-    mem.write(0x000e, 0);
-
-    // halt
-    mem.write(0x000f, Instruction::HLT as u8);
-
-    while !cpu.halted {
-        let opcode = mem.read(cpu.pc);
-        cpu.inc_pc();
-
-        match opcode {
-            x if x == Instruction::MOV as u8 => cpu.mov(&mut mem),
-            x if x == Instruction::ADD as u8 => cpu.add(&mut mem),
-            x if x == Instruction::SUB as u8 => cpu.sub(&mut mem),
-            x if x == Instruction::JMP as u8 => cpu.jmp(&mut mem),
-            x if x == Instruction::JZ as u8 => cpu.jz(&mut mem),
-            x if x == Instruction::JNZ as u8 => cpu.jnz(&mut mem),
-            x if x == Instruction::HLT as u8 => cpu.halt(),
-            _ => panic!("Unknown opcode {:02X}", opcode),
-        }
+    for (i, byte) in program.iter().enumerate() {
+        mem.write(i as u16, *byte);
     }
 
-    println!("{:#?}", cpu);
+    while !cpu.halted {
+        cpu.step(&mut mem);
+        println!("{:?}", cpu);
+    }
 }

@@ -1,4 +1,6 @@
+use crate::instructions::Instruction;
 use crate::memory::Memory;
+
 #[derive(Default, Debug)]
 pub struct CPU {
     pub a: u8,
@@ -16,6 +18,22 @@ pub struct CPU {
 }
 
 impl CPU {
+    pub fn step(&mut self, mem: &mut Memory) {
+        let opcode = mem.read(self.pc);
+        self.inc_pc();
+
+        match opcode {
+            x if x == Instruction::MOV as u8 => self.mov(mem),
+            x if x == Instruction::ADD as u8 => self.add(mem),
+            x if x == Instruction::SUB as u8 => self.sub(mem),
+            x if x == Instruction::JMP as u8 => self.jmp(mem),
+            x if x == Instruction::JZ as u8 => self.jz(mem),
+            x if x == Instruction::JNZ as u8 => self.jnz(mem),
+            x if x == Instruction::HLT as u8 => self.halt(),
+            _ => panic!("Unknown opcode {:02X}", opcode),
+        }
+    }
+
     pub fn inc_pc(&mut self) {
         self.pc += 1;
     }
@@ -24,7 +42,7 @@ impl CPU {
         self.halted = true;
     }
 
-    pub fn mov(&mut self, mem: &mut Memory) {
+    pub fn mov(&mut self, mem: &Memory) {
         let reg = mem.read(self.pc);
         self.inc_pc();
         let val = mem.read(self.pc);
@@ -41,7 +59,7 @@ impl CPU {
         self.zero = val == 0;
     }
 
-    pub fn add(&mut self, mem: &mut Memory) {
+    pub fn add(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
         self.pc += 1;
         let src = mem.read(self.pc);
@@ -83,7 +101,7 @@ impl CPU {
         self.carry = carry;
     }
 
-    pub fn sub(&mut self, mem: &mut Memory) {
+    pub fn sub(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
         self.pc += 1;
         let src = mem.read(self.pc);
@@ -125,7 +143,7 @@ impl CPU {
         self.carry = borrow;
     }
 
-    pub fn jmp(&mut self, mem: &mut Memory) {
+    pub fn jmp(&mut self, mem: &Memory) {
         let low = mem.read(self.pc) as u16;
         self.inc_pc();
         let high = mem.read(self.pc) as u16;
@@ -136,7 +154,7 @@ impl CPU {
         self.pc = addrs;
     }
 
-    pub fn jz(&mut self, mem: &mut Memory) {
+    pub fn jz(&mut self, mem: &Memory) {
         let low = mem.read(self.pc) as u16;
         self.inc_pc();
         let high = mem.read(self.pc) as u16;
@@ -149,7 +167,7 @@ impl CPU {
         }
     }
 
-    pub fn jnz(&mut self, mem: &mut Memory) {
+    pub fn jnz(&mut self, mem: &Memory) {
         let low = mem.read(self.pc) as u16;
         self.inc_pc();
         let high = mem.read(self.pc) as u16;
