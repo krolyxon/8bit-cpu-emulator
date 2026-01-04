@@ -1,6 +1,6 @@
 # 8-Bit CPU Emulator
 
-## Added instructions
+## Supported Instructions
 1. MOV
 2. ADD
 3. SUB
@@ -11,7 +11,7 @@
 
 # Usage
 ```bash
-cargo run -- --f <filename.asc>
+cargo run -- --f <examples/filename.asc>
 ```
 
 ## Todo
