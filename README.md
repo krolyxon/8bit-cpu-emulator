@@ -8,17 +8,16 @@
 
 ## Supported Instructions
 
-| Instruction | Syntax       |
-| ----------- | ------------ |
-| MOV         | mov reg, imm OR mov reg, reg |
-| ADD         | add reg, imm OR add r1, r2   |
-| SUB         | sub reg, imm OR add r1, r2   |
-| JMP         | jmp addr     |
-| JZ          | jz addr      |
-| JNZ         | jnz addr     |
-| CMP         | cmp reg, imm OR cmp reg, reg     |
-| HLT (Halt)  | hlt          |
-
+| Instruction | Syntax (Reg-Reg) | Syntax (Reg-Imm) |
+| ----------- | ---------------- | ---------------- |
+| MOV         | mov dest, src    | mov reg, imm     |
+| ADD         | add r1, r2       | add reg, imm     |
+| SUB         | sub r1, r2       | sub reg, imm     |
+| JMP         | jmp addr         | jmp addr         |
+| JZ          | jz addr          | jz addr          |
+| JNZ         | jnz addr         | jnz addr         |
+| CMP         | cmp reg, reg     | cmp reg, imp     |
+| HLT (Halt)  | hlt              | hlt              |
 
 ## Registers
 | Register | Size   | Description                    |
