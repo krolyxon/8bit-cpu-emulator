@@ -42,8 +42,12 @@ cargo run -- --f <examples/filename.asc>
 ```
 
 ## Todo
-- [ ] Assembler
+- [x] Assembler
     - [x] Lexer/Tokenizer
-    - [ ] Add label support (supporting JMP/JZ/JNZ)
+    - [x] Add label support (supporting JMP/JZ/JNZ)
+- [ ] Add instructions
+    - [ ] CMP
+    - [ ] CALL
+    - [ ] RET
 - [ ] Error handling
 - [ ] Build Debugger
