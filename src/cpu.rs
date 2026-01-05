@@ -2,6 +2,7 @@ use crate::instructions::Instruction;
 use crate::memory::Memory;
 
 #[derive(Default, Debug)]
+#[allow(dead_code)]
 pub struct CPU {
     pub a: u8,
     pub b: u8,
@@ -18,6 +19,23 @@ pub struct CPU {
 }
 
 impl CPU {
+
+    pub fn debug_instr(&self, mem: &Memory) {
+        let opcode = mem.read(self.pc);
+
+        println!(
+            "PC={:04X} {:<3} | A={:02X} B={:02X} C={:02X} D={:02X} | Z={} C={}",
+            self.pc,
+            Instruction::opcode_name(opcode),
+            self.a,
+            self.b,
+            self.c,
+            self.d,
+            self.zero as u8,
+            self.carry as u8
+        );
+    }
+
     pub fn step(&mut self, mem: &mut Memory) {
         let opcode = mem.read(self.pc);
         self.inc_pc();

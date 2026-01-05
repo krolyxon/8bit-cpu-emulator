@@ -8,3 +8,18 @@ pub enum Instruction {
     JNZ = 0x06,
     HLT = 0xFF,
 }
+
+impl Instruction {
+    pub  fn opcode_name(op: u8) -> &'static str{
+        match op {
+            0x01 => "MOV",
+            0x02 => "ADD",
+            0x03 => "SUB",
+            0x04 => "JMP",
+            0x05 => "JZ",
+            0x06 => "JNZ",
+            0xFF => "HLT",
+            _ => "???",
+        }
+    }
+}

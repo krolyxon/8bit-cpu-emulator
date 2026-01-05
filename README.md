@@ -1,13 +1,40 @@
 # 8-Bit CPU Emulator
 
+## CPU Architecture
+- Word Size
+    - **Data Width:** 8 bits
+    - **Address width:** 16 bits
+    - **Address space:** 64 KB (0x0000- 0xFFFF)
+
 ## Supported Instructions
-1. MOV
-2. ADD
-3. SUB
-4. JMP (Jump)
-5. JZ (Jump if zero)
-5. JZ (Jump if not zero)
-6. HLT (Halt)
+
+| Instruction | Syntax       |
+| ----------- | ------------ |
+| MOV         | mov reg, imm |
+| ADD         | add r1, r2   |
+| SUB         | sub r1, r2   |
+| JMP         | jmp addr     |
+| JZ          | jz addr      |
+| JNZ         | jnz addr     |
+| HLT (Halt)  | hlt          |
+
+
+## Registers
+| Register | Size   | Description                    |
+| -------- | ------ | ------------------------------ |
+| A        | 8-bit  | General                        |
+| B        | 8-bit  | General                        |
+| C        | 8-bit  | General                        |
+| D        | 8-bit  | General                        |
+| PC       | 16-bit | Program Counter                |
+| SP       | 16-bit | Stack pointer (unused for now) |
+
+## Flags
+| Flag  | Description  |
+| ----- | ------------ |
+| Z     | Zero Flag    |
+| C     | Carry/Borrow |
+
 
 # Usage
 ```bash

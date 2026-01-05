@@ -3,6 +3,8 @@ mod cpu;
 mod instructions;
 mod memory;
 
+use std::io;
+
 use cpu::CPU;
 use memory::Memory;
 use clap::Parser;
@@ -30,7 +32,10 @@ fn main() {
     }
 
     while !cpu.halted {
+        cpu.debug_instr(&mem);
         cpu.step(&mut mem);
-        println!("{:?}", cpu);
+
+        let mut buf = String::new();
+        io::stdin().read_line(&mut buf).unwrap();
     }
 }
