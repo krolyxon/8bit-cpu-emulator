@@ -3,6 +3,7 @@ mov a, 10
 ; move imm 5 to register B
 mov b, 5
 ; Add a & B
-add a, b
+add a, 2
+sub a, 2
 ; Halt
 hlt

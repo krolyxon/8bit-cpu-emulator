@@ -2,12 +2,13 @@ use crate::instructions::Instruction;
 use std::collections::HashMap;
 
 fn tokenize(line: &str) -> Vec<String> {
-    line.split(|c| c == ' ' || c == ',' || c == '\t')
+    line.split([' ', ',', '\t'])
         .filter(|s| !s.is_empty())
         .map(|s| s.to_lowercase())
         .collect()
 }
 
+// Returns corrensponding u8 value of the register
 fn parse_reg(s: &str) -> u8 {
     match s {
         "a" => 0,
@@ -19,10 +20,7 @@ fn parse_reg(s: &str) -> u8 {
 }
 
 fn is_reg(s: &str) -> bool {
-    match s {
-        "a" | "b" | "c" | "d" => true,
-        _ => false,
-    }
+    matches!(s, "a" | "b" | "c" | "d")
 }
 
 fn instr_size(tokens: &[String]) -> u16 {
@@ -76,16 +74,16 @@ pub fn assembler(source: &str) -> Vec<u8> {
         match tokens[0].as_str() {
             "mov" => {
                 // mov reg, imm
-                let reg = parse_reg(&tokens[1]);
+                let r1= parse_reg(&tokens[1]);
                 if is_reg(&tokens[2]) {
                     let r2 = parse_reg(&tokens[2]);
                     bytes.push(Instruction::MOV_RR as u8);
-                    bytes.push(reg);
+                    bytes.push(r1);
                     bytes.push(r2);
                 } else {
                     let imm: u8 = tokens[2].parse().unwrap();
                     bytes.push(Instruction::MOV_RI as u8);
-                    bytes.push(reg);
+                    bytes.push(r1);
                     bytes.push(imm);
                 }
             }
@@ -93,21 +91,35 @@ pub fn assembler(source: &str) -> Vec<u8> {
             "add" => {
                 // add a, b
                 let r1 = parse_reg(&tokens[1]);
-                let r2 = parse_reg(&tokens[2]);
 
-                bytes.push(Instruction::ADD as u8);
-                bytes.push(r1);
-                bytes.push(r2);
+                if is_reg(&tokens[2]) {
+                    let r2 = parse_reg(&tokens[2]);
+                    bytes.push(Instruction::ADD_RR as u8);
+                    bytes.push(r1);
+                    bytes.push(r2);
+                } else {
+                    let imm: u8 = tokens[2].parse().unwrap();
+                    bytes.push(Instruction::ADD_RI as u8);
+                    bytes.push(r1);
+                    bytes.push(imm);
+                }
+
             }
 
             "sub" => {
                 // sub a, b
-                let r2 = parse_reg(&tokens[2]);
                 let r1 = parse_reg(&tokens[1]);
-
-                bytes.push(Instruction::SUB as u8);
-                bytes.push(r1);
-                bytes.push(r2);
+                if is_reg(&tokens[2]) {
+                    let r2 = parse_reg(&tokens[2]);
+                    bytes.push(Instruction::SUB_RR as u8);
+                    bytes.push(r1);
+                    bytes.push(r2);
+                } else {
+                    let imm: u8 = tokens[2].parse().unwrap();
+                    bytes.push(Instruction::SUB_RI as u8);
+                    bytes.push(r1);
+                    bytes.push(imm);
+                }
             }
 
             "jmp" | "jz" | "jnz" => {

@@ -1,9 +1,12 @@
 #[repr(u8)]
+#[allow(non_camel_case_types)]
 pub enum Instruction {
     MOV_RI = 0x01,
     MOV_RR = 0x08,
-    ADD = 0x02,
-    SUB = 0x03,
+    ADD_RR = 0x02,
+    ADD_RI = 0x0A,
+    SUB_RR = 0x03,
+    SUB_RI = 0x0B,
     JMP = 0x04,
     JZ = 0x05,
     JNZ = 0x06,
@@ -16,8 +19,8 @@ impl Instruction {
     pub  fn opcode_name(op: u8) -> &'static str{
         match op {
             0x01 | 0x08 => "MOV",
-            0x02 => "ADD",
-            0x03 => "SUB",
+            0x02 | 0x0A => "ADD",
+            0x03 | 0x0B => "SUB",
             0x04 => "JMP",
             0x05 => "JZ",
             0x06 => "JNZ",

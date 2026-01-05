@@ -4,15 +4,15 @@
 - Word Size
     - **Data Width:** 8 bits
     - **Address width:** 16 bits
-    - **Address space:** 64 KB (0x0000- 0xFFFF)
+    - **Address space:** 64 KB (0x0000-0xFFFF)
 
 ## Supported Instructions
 
 | Instruction | Syntax       |
 | ----------- | ------------ |
 | MOV         | mov reg, imm OR mov reg, reg |
-| ADD         | add r1, r2   |
-| SUB         | sub r1, r2   |
+| ADD         | add reg, imm OR add r1, r2   |
+| SUB         | sub reg, imm OR add r1, r2   |
 | JMP         | jmp addr     |
 | JZ          | jz addr      |
 | JNZ         | jnz addr     |

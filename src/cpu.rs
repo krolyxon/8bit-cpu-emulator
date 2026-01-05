@@ -42,8 +42,10 @@ impl CPU {
         match opcode {
             x if x == Instruction::MOV_RI as u8 => self.mov_ri(mem),
             x if x == Instruction::MOV_RR as u8 => self.mov_rr(mem),
-            x if x == Instruction::ADD as u8 => self.add(mem),
-            x if x == Instruction::SUB as u8 => self.sub(mem),
+            x if x == Instruction::ADD_RR as u8 => self.add_rr(mem),
+            x if x == Instruction::ADD_RI as u8 => self.add_ri(mem),
+            x if x == Instruction::SUB_RR as u8 => self.sub_rr(mem),
+            x if x == Instruction::SUB_RI as u8 => self.sub_ri(mem),
             x if x == Instruction::JMP as u8 => self.jmp(mem),
             x if x == Instruction::JZ as u8 => self.jz(mem),
             x if x == Instruction::JNZ as u8 => self.jnz(mem),
@@ -92,7 +94,7 @@ impl CPU {
     }
 
 
-    pub fn add(&mut self, mem: &Memory) {
+    pub fn add_rr(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
         self.pc += 1;
         let src = mem.read(self.pc);
@@ -133,8 +135,35 @@ impl CPU {
         self.zero = result == 0;
         self.carry = carry;
     }
+    pub fn add_ri(&mut self, mem: &Memory) {
 
-    pub fn sub(&mut self, mem: &Memory) {
+        let dest = mem.read(self.pc);
+        self.pc += 1;
+        let imm = mem.read(self.pc);
+        self.pc += 1;
+
+        let (result, carry) = match dest {
+            0 => self.a.overflowing_add(imm),
+            1 => self.b.overflowing_add(imm),
+            2 => self.c.overflowing_add(imm),
+            3 => self.d.overflowing_add(imm),
+            _ => (0, false),
+        };
+
+        match dest {
+            0 => self.a = result,
+            1 => self.b = result,
+            2 => self.c = result,
+            3 => self.d = result,
+            _ => {}
+        }
+
+        self.zero = result == 0;
+        self.carry = carry;
+    }
+
+
+    pub fn sub_rr(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
         self.pc += 1;
         let src = mem.read(self.pc);
@@ -175,6 +204,33 @@ impl CPU {
         self.zero = result == 0;
         self.carry = borrow;
     }
+
+ pub fn sub_ri(&mut self, mem: &Memory) {
+        let dest = mem.read(self.pc);
+        self.pc += 1;
+        let imm = mem.read(self.pc);
+        self.pc += 1;
+
+        let (result, borrow) = match dest {
+            0 => self.a.overflowing_sub(imm),
+            1 => self.b.overflowing_sub(imm),
+            2 => self.c.overflowing_sub(imm),
+            3 => self.d.overflowing_sub(imm),
+            _ => (0, false),
+        };
+
+        match dest {
+            0 => self.a = result,
+            1 => self.b = result,
+            2 => self.c = result,
+            3 => self.d = result,
+            _ => {}
+        }
+
+        self.zero = result == 0;
+        self.carry = borrow;
+    }
+
 
     pub fn jmp(&mut self, mem: &Memory) {
         let low = mem.read(self.pc) as u16;
