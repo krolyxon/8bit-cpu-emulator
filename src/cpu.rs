@@ -69,21 +69,9 @@ impl CPU {
             x if x == Instruction::CMP_RR as u8 => self.cmp_rr(mem),
             x if x == Instruction::MUL as u8 => self.mul(mem),
             x if x == Instruction::DIV as u8 => self.div(mem),
-            x if x == Instruction::CALL as u8 => {
-                let low  = mem.read(self.pc) as u16; self.inc_pc();
-                let high = mem.read(self.pc) as u16; self.inc_pc();
-                let addr = (high << 8) | low;
-
-                let return_addr = self.pc;
-
-                self.push16(mem, return_addr);
-                self.pc = addr;
-
-            },
-            x if x == Instruction::RET as u8 => {
-                let addr = self.pop16(mem);
-                self.pc = addr;
-            },
+            x if x == Instruction::CALL as u8 => self.call(mem),
+            x if x == Instruction::RET as u8 => self.ret(mem),
+            x if x == Instruction::SYS as u8 => self.syscall(mem),
             x if x == Instruction::HLT as u8 => self.halt(),
             _ => panic!("Unknown opcode {:02X}", opcode),
         }
@@ -94,12 +82,10 @@ impl CPU {
     }
 
     pub fn inc_sp(&mut self) {
-        // self.sp += 1;
         self.sp = self.sp.wrapping_add(1);
     }
 
     pub fn dec_sp(&mut self) {
-        // self.sp -= 1;
         self.sp = self.sp.wrapping_sub(1);
     }
 
@@ -377,6 +363,44 @@ impl CPU {
 
         self.zero = result == 0;
         // carry unchanged
+    }
+
+    pub fn call(&mut self, mem: &mut Memory ) {
+        let low  = mem.read(self.pc) as u16; self.inc_pc();
+        let high = mem.read(self.pc) as u16; self.inc_pc();
+        let addr = (high << 8) | low;
+
+        let return_addr = self.pc;
+
+        self.push16(mem, return_addr);
+        self.pc = addr;
+
+    }
+
+    pub fn ret(&mut self, mem: &mut Memory) {
+        let addr = self.pop16(mem);
+        self.pc = addr;
+    }
+
+
+    pub fn syscall(&mut self, mem: &Memory) {
+        let num = mem.read(self.pc);
+        self.pc = self.pc.wrapping_add(1);
+        match num {
+            0 => {
+                // exit
+                self.halted = true;
+            }
+            1 => {
+                // print A as number
+                println!("{}", self.a);
+            }
+            2 => {
+                // print A as ASCII char
+                print!("{}", self.a as char);
+            }
+            _ => panic!("Unknown syscall {}", num),
+        }
     }
 
     fn get_reg(&self, r: u8) -> u8 {

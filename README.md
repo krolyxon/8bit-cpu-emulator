@@ -20,6 +20,7 @@
 | MUL         | mul r1, r2     |
 | DIV         | div r1, r2     |
 | CALL        | call \<label\>     |
+| SYS         | sys \<syscall_no\> |
 | HLT (Halt)  | hlt              |
 
 
@@ -33,11 +34,20 @@
 | PC       | 16-bit | Program Counter                |
 | SP       | 16-bit | Stack pointer                  |
 
+
 ## Flags
 | Flag  | Description  |
 | ----- | ------------ |
 | Z     | Zero Flag    |
 | C     | Carry/Borrow |
+
+
+## Syscalls
+| Imm | Meaning |
+| --- | ------- |
+| 0   | Exit Program |
+| 1   | Print register A as integer |
+| 2   | Print register A as ASCII char |
 
 
 # Usage
@@ -49,11 +59,12 @@ cargo run -- --f <examples/filename.asc>
 - [x] Assembler
     - [x] Lexer/Tokenizer
     - [x] Add label support (supporting JMP/JZ/JNZ)
-- [ ] Add instructions
+- [x] Add instructions
     - [x] CMP
     - [x] MUL
     - [x] DIV
     - [x] CALL
     - [x] RET
-- [ ] Error handling
-- [ ] Build Debugger
+    - [x] SYS
+- [ ] Better Error handling
+- [ ] TUI Debugger

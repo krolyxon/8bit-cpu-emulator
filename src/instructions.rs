@@ -16,6 +16,7 @@ pub enum Instruction {
     DIV = 0x0D,
     CALL = 0x0E,
     RET = 0x0F,
+    SYS = 0x10,
     HLT = 0xFF,
 }
 
@@ -33,6 +34,7 @@ impl Instruction {
             0x0D => "DIV",
             0x0E => "CALL",
             0x0F => "RET",
+            0x10 => "SYS",
             0xFF => "HLT",
 
             _ => "???",
