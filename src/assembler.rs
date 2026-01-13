@@ -75,7 +75,7 @@ pub fn assembler(source: &str) -> Vec<u8> {
         match tokens[0].as_str() {
             "mov" => {
                 // mov reg, imm
-                let r1= parse_reg(&tokens[1]);
+                let r1 = parse_reg(&tokens[1]);
                 if is_reg(&tokens[2]) {
                     let r2 = parse_reg(&tokens[2]);
                     bytes.push(Instruction::MOV_RR as u8);
@@ -104,7 +104,6 @@ pub fn assembler(source: &str) -> Vec<u8> {
                     bytes.push(r1);
                     bytes.push(imm);
                 }
-
             }
 
             "sub" => {
@@ -161,7 +160,6 @@ pub fn assembler(source: &str) -> Vec<u8> {
                 bytes.push(Instruction::MUL as u8);
                 bytes.push(r1);
                 bytes.push(r2);
-
             }
 
             "div" => {
@@ -174,13 +172,11 @@ pub fn assembler(source: &str) -> Vec<u8> {
             }
 
             "call" => {
-                let addr = *symbols
-                    .get(&tokens[1])
-                    .expect("Unknown label");
+                let addr = *symbols.get(&tokens[1]).expect("Unknown label");
 
                 bytes.push(Instruction::CALL as u8);
-                bytes.push((addr & 0xFF) as u8);   // low
-                bytes.push((addr >> 8) as u8);     // high
+                bytes.push((addr & 0xFF) as u8); // low
+                bytes.push((addr >> 8) as u8); // high
             }
 
             "ret" => {

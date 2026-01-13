@@ -5,10 +5,10 @@ mod memory;
 
 use std::io;
 
+use crate::assembler::assembler;
+use clap::Parser;
 use cpu::CPU;
 use memory::Memory;
-use clap::Parser;
-use crate::assembler::assembler;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -17,11 +17,13 @@ struct Args {
     filename: String,
 }
 
-
 fn main() {
     let args = Args::parse();
 
-    let mut cpu = CPU {sp: 0xFFFE, ..Default::default( )};
+    let mut cpu = CPU {
+        sp: 0xFFFE,
+        ..Default::default()
+    };
     let mut mem = Memory::new();
 
     let asm = std::fs::read_to_string(args.filename).unwrap();

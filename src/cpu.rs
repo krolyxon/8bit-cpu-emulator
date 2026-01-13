@@ -89,7 +89,6 @@ impl CPU {
         self.sp = self.sp.wrapping_sub(1);
     }
 
-
     pub fn halt(&mut self) {
         self.halted = true;
     }
@@ -114,7 +113,7 @@ impl CPU {
     pub fn mov_rr(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
         self.inc_pc();
-        let src= mem.read(self.pc);
+        let src = mem.read(self.pc);
         self.inc_pc();
 
         let val = self.get_reg(src);
@@ -122,7 +121,6 @@ impl CPU {
 
         self.zero = val == 0;
     }
-
 
     pub fn add_rr(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
@@ -166,7 +164,6 @@ impl CPU {
         self.carry = carry;
     }
     pub fn add_ri(&mut self, mem: &Memory) {
-
         let dest = mem.read(self.pc);
         self.pc += 1;
         let imm = mem.read(self.pc);
@@ -191,7 +188,6 @@ impl CPU {
         self.zero = result == 0;
         self.carry = carry;
     }
-
 
     pub fn sub_rr(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
@@ -235,7 +231,7 @@ impl CPU {
         self.carry = borrow;
     }
 
- pub fn sub_ri(&mut self, mem: &Memory) {
+    pub fn sub_ri(&mut self, mem: &Memory) {
         let dest = mem.read(self.pc);
         self.pc += 1;
         let imm = mem.read(self.pc);
@@ -260,7 +256,6 @@ impl CPU {
         self.zero = result == 0;
         self.carry = borrow;
     }
-
 
     pub fn jmp(&mut self, mem: &Memory) {
         let low = mem.read(self.pc) as u16;
@@ -329,24 +324,28 @@ impl CPU {
     }
 
     pub fn mul(&mut self, mem: &Memory) {
-        let dest = mem.read(self.pc); self.inc_pc();
-        let src  = mem.read(self.pc); self.inc_pc();
+        let dest = mem.read(self.pc);
+        self.inc_pc();
+        let src = mem.read(self.pc);
+        self.inc_pc();
 
         let lhs = self.get_reg(dest);
         let rhs = self.get_reg(src);
 
         let result16 = (lhs as u16) * (rhs as u16);
-        let result8  = (result16 & 0xFF) as u8;
+        let result8 = (result16 & 0xFF) as u8;
 
         self.set_reg(dest, result8);
 
-        self.zero  = result8 == 0;
+        self.zero = result8 == 0;
         self.carry = result16 > 0xFF;
     }
 
     pub fn div(&mut self, mem: &Memory) {
-        let dest = mem.read(self.pc); self.inc_pc();
-        let src  = mem.read(self.pc); self.inc_pc();
+        let dest = mem.read(self.pc);
+        self.inc_pc();
+        let src = mem.read(self.pc);
+        self.inc_pc();
 
         let lhs = self.get_reg(dest);
         let rhs = self.get_reg(src);
@@ -365,23 +364,23 @@ impl CPU {
         // carry unchanged
     }
 
-    pub fn call(&mut self, mem: &mut Memory ) {
-        let low  = mem.read(self.pc) as u16; self.inc_pc();
-        let high = mem.read(self.pc) as u16; self.inc_pc();
+    pub fn call(&mut self, mem: &mut Memory) {
+        let low = mem.read(self.pc) as u16;
+        self.inc_pc();
+        let high = mem.read(self.pc) as u16;
+        self.inc_pc();
         let addr = (high << 8) | low;
 
         let return_addr = self.pc;
 
         self.push16(mem, return_addr);
         self.pc = addr;
-
     }
 
     pub fn ret(&mut self, mem: &mut Memory) {
         let addr = self.pop16(mem);
         self.pc = addr;
     }
-
 
     pub fn syscall(&mut self, mem: &Memory) {
         let num = mem.read(self.pc);
@@ -422,5 +421,4 @@ impl CPU {
             _ => panic!("Invalid register"),
         }
     }
-
 }

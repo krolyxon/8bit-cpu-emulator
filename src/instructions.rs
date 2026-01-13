@@ -21,7 +21,7 @@ pub enum Instruction {
 }
 
 impl Instruction {
-    pub  fn opcode_name(op: u8) -> &'static str{
+    pub fn opcode_name(op: u8) -> &'static str {
         match op {
             0x01 | 0x08 => "MOV",
             0x02 | 0x0A => "ADD",
